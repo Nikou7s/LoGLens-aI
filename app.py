@@ -3,6 +3,7 @@ import streamlit as st
 from PIL import Image
 from google import genai
 from google.genai import types
+from streamlit_paste_button import paste_image_button
 
 # Page setup
 st.set_page_config(
@@ -30,22 +31,42 @@ with col1:
     st.subheader("1. System / Terminal Logs")
     log_input = st.text_area(
         "Paste error logs or console traces:",
-        height=250,
+        height=280,
         placeholder="e.g. systemd[1]: Failed to start nginx.service (Address already in use)"
     )
 
 with col2:
-    st.subheader("2. Terminal Screenshot (Optional)")
-    uploaded_image = st.file_uploader("Upload screenshot of terminal/error output:", type=["png", "jpg", "jpeg"])
-    if uploaded_image:
-        st.image(uploaded_image, caption="Uploaded Screenshot Preview", use_column_width=True)
+    st.subheader("2. Terminal Screenshot")
+    
+    # Dual input: Clipboard Paste or File Upload
+    tab_paste, tab_upload = st.tabs(["📋 Paste from Clipboard", "📁 Upload File"])
+    
+    final_image = None
+
+    with tab_paste:
+        st.write("Take a screenshot to your clipboard and click paste below:")
+        paste_result = paste_image_button(
+            label="📋 Paste Screenshot from Clipboard",
+            text_color="#ffffff",
+            background_color="#4CAF50",
+            hover_background_color="#45a049",
+        )
+        if paste_result.image_data is not None:
+            final_image = paste_result.image_data
+            st.image(final_image, caption="Pasted Screenshot Preview", use_container_width=True)
+
+    with tab_upload:
+        uploaded_file = st.file_uploader("Upload screenshot image:", type=["png", "jpg", "jpeg"])
+        if uploaded_file:
+            final_image = Image.open(uploaded_file)
+            st.image(final_image, caption="Uploaded Screenshot Preview", use_container_width=True)
 
 # Run Analysis Button
 if st.button("🚀 Analyze with Gemma 4", type="primary"):
     if not api_key_input:
         st.error("Please provide a valid Gemini API Key in the sidebar or .env file.")
-    elif not log_input and not uploaded_image:
-        st.warning("Please provide either log text or upload a screenshot to analyze.")
+    elif not log_input and final_image is None:
+        st.warning("Please provide either log text or a screenshot (via paste or upload).")
     else:
         with st.spinner("Gemma 4 is inspecting system logs and visual output..."):
             try:
@@ -60,9 +81,10 @@ if st.button("🚀 Analyze with Gemma 4", type="primary"):
                 )
                 
                 contents = []
-                if uploaded_image:
-                    img = Image.open(uploaded_image)
-                    contents.append(img)
+                
+                # Pass the image object (whether from paste or upload)
+                if final_image is not None:
+                    contents.append(final_image)
                 
                 if log_input:
                     contents.append(f"--- TERMINAL LOGS ---\n{log_input}\n---------------------")
@@ -84,3 +106,4 @@ if st.button("🚀 Analyze with Gemma 4", type="primary"):
 
             except Exception as e:
                 st.error(f"Error during analysis: {str(e)}")
+
