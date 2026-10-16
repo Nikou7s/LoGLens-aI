@@ -1,160 +1,159 @@
-# 🛠️ LogLens AI — SysAdmin & Security Copilot
+# 🛠 LogLens AI — SysAdmin & Security Copilot
 
 [![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-orange.svg)](https://hacktoberfest.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
-[![Powered by Gemma 4](https://img.shields.io/badge/Google-Gemma_4-4285F4.svg)](https://ai.google.dev/)
+[![Powered by Gemini](https://img.shields.io/badge/Google-Gemini_API-4285F4.svg)](https://ai.google.dev/)
 
-> **LogLens AI** is an open-source, multimodal system administration assistant that analyzes terminal error traces, system logs, and dashboard screenshots to provide root-cause diagnostics and step-by-step remediation bash commands.
+> **LogLens AI** is a dual-mode, autonomous system administration assistant. It features an **interactive web dashboard** for multimodal log analysis and a **native terminal copilot** that scans host telemetry to generate and execute OS-tailored remediation commands directly on your machine.
 
-Built for **Hacktoberfest Hack Day Pune x Poona College** under the **Best Use of Gemma 4** track (Google DeepMind).
+Built for **Hacktoberfest Hack Day Pune x Poona College** under the **Best Use of Gemma 4** and **Best Open-Source AI Project** tracks.
 
 ---
 
 ## 📌 Problem Statement
 
-Debugging broken Linux services, systemd failures, network socket collisions, or permission denials often requires context-switching across logs, manual web searches, and visual command-line outputs. Standard text-only tools fail to inspect visual cues from terminal screenshots or monitoring dashboards, leading to longer downtime and troubleshooting fatigue.
+Debugging broken Linux services, network socket collisions, or missing dependencies usually forces developers into a loop of copying errors, searching the web, and pasting commands. Standard AI wrappers lack context about your specific hardware, OS distribution, and package managers, often hallucinating commands that won't work on your machine (e.g., suggesting `apt` on an Arch system). 
+
+LogLens bridges this gap by acting as an active, environment-aware execution engine.
 
 ---
 
 ## 🚀 Key Features
 
-- 👁️ **Multimodal Diagnostics:** Upload raw terminal text logs alongside screenshots of terminal output or monitoring dashboards.
-- ⚡ **Gemma 4 Powered:** Leverages Google's lightweight `gemma-4` instruction-tuned open model via the official `google-genai` SDK for low-latency analysis.
-- 🔒 **Security Risk Inspection:** Evaluates system logs for open ports, permission flaws, or unhandled exceptions.
-- 📦 **Container First:** Fully dockerized with `docker-compose` for reproducible deployments across any Linux environment.
-- 🖥️ **Interactive Web Dashboard:** Clean, responsive UI powered by Streamlit for instant drag-and-drop log auditing.
+- 💻 **Autonomous Execution Engine:** Resolves issues by writing and executing native bash commands directly on your host system with a human-in-the-loop safeguard (`[y/N]` confirmation).
+- 🔍 **Context-Aware Telemetry:** Automatically scans `/etc/os-release`, hardware architecture, and installed package managers to tailor commands specifically for your distro (e.g., automatically prioritizing `yay`/AUR over `pacman` for third-party tools).
+- 👁 **Multimodal Web Dashboard:** A containerized Streamlit UI allowing drag-and-drop terminal screenshots and raw text logs for visual root-cause diagnostics.
+- ⚡ **Resilient Model Routing:** Powered by Google's `google-genai` SDK, featuring automatic fallback logic (Gemma 4 -> Gemini 3.5 Flash -> Gemini 3.1 Flash-Lite) to guarantee uptime during rate limits.
+- 📖 **Native Linux Integration:** Ships with a symlink-ready executable and a native `groff` manual page (`man loglens`).
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗 Architecture Overview
 
-```
- ┌───────────────────────────────────────────────────────────────────┐
- │                        USER INTERFACE                             │
- │                    Streamlit Web App (:8501)                       │
- └─────────────────────────────────┬─────────────────────────────────┘
-                                   │
-                    Log Text & Terminal Screenshots
-                                   │
-                                   ▼
- ┌───────────────────────────────────────────────────────────────────┐
- │                       FASTAPI / PYTHON CORE                       │
- │        Payload Assembly & Prompt Formatting (google-genai)        │
- └─────────────────────────────────┬─────────────────────────────────┘
-                                   │
-                       Multimodal REST Request
-                                   │
-                                   ▼
- ┌───────────────────────────────────────────────────────────────────┐
- │                      GOOGLE GEMINI API                            │
- │                        (Gemma 4 Engine)                           │
- └─────────────────────────────────┬─────────────────────────────────┘
-                                   │
-                      Structured Audit & Bash Fix
-                                   │
-                                   ▼
- ┌───────────────────────────────────────────────────────────────────┐
- │                     REMEDIATION REPORT                            │
- │     • Root Cause Analysis                                         │
- │     • Security Risk Assessment                                    │
- │     • Step-by-Step Executable Bash Commands                      │
- └───────────────────────────────────────────────────────────────────┘
+```text
+ ┌───────────────────────────────────────────────────────────────┐
+ │                       DUAL INTERFACES                         │
+ └──────┬─────────────────────────────────────────────────┬──────┘
+        │                                                 │
+        ▼                                                 ▼
+ ┌──────────────┐                                  ┌─────────────┐
+ │ Web UI (GUI) │                                  │ CLI (Agent) │
+ │  Streamlit   │                                  │ ./loglens   │
+ └──────┬───────┘                                  └──────┬──────┘
+        │ (Dockerized)                                    │ (Native Host)
+        │                                                 ▼
+        │                                          ┌─────────────┐
+        │                                          │ OS Scanner  │
+        │                                          │ (/etc/os..) │
+        ▼                                          └──────┬──────┘
+ ┌────────────────────────────────────────────────────────┼──────┐
+ │                     GOOGLE GEMINI API                  │      │
+ │       (Gemma-4-26b / Gemini 3.5 Flash Fallbacks)       │      │
+ └────────────────────────────────┬───────────────────────┴──────┘
+                                  │
+                                  ▼
+ ┌───────────────────────────────────────────────────────────────┐
+ │                       REMEDIATION                             │
+ │  • Multimodal Diagnostic Report (Web Dashboard)               │
+ │  • Executable Bash Commands & Compilation Chains (Terminal)   │
+ └───────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-- **AI Engine:** Google Gemma 4 (`gemma-4-26b-a4b-it`) via Gemini API
-- **SDK:** `google-genai`
-- **Frontend / Dashboard:** Streamlit
-- **Image Processing:** Pillow (`PIL`)
-- **Containerization:** Docker & Docker Compose
-- **Platform OS:** Linux (Tested on Manjaro / Arch Linux & Ubuntu)
+- **AI Engine:** Google Gemini API (`gemma-4-26b-a4b-it`, `gemini-3.5-flash`)
+- **SDK:** Official `google-genai`
+- **Frontend Core:** Streamlit, Pillow (Image Processing)
+- **Agent Core:** Python `subprocess`, OS Telemetry, ANSI UI styling
+- **Infrastructure:** Docker, Docker Compose, Groff (Man Pages)
 
 ---
 
-## 🚀 Quickstart Guide
+## 🚀 Installation & Quickstart
 
 ### Prerequisites
+- Python 3.11+
+- [Google Gemini API Key](https://aistudio.google.com/)
+- Docker (optional, for Web UI only)
 
-- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/) installed
-- A [Google Gemini API Key](https://aistudio.google.com/)
+### 1. Clone & Configure
+```bash
+git clone https://github.com/YOUR_GITHUB_USERNAME/loglens-ai.git
+cd loglens-ai
+
+# Set your API Key
+echo 'GEMINI_API_KEY="your_api_key_here"' > .env
+```
+
+### 2. Set Up the Native CLI Agent
+To allow LogLens to safely detect your host OS (Arch/Manjaro, Debian, etc.) and execute commands natively, initialize its local virtual environment:
+
+```bash
+# Create an isolated virtual environment
+python3 -m venv .venv
+
+# Install dependencies
+./.venv/bin/pip install -r requirements.txt
+
+# Make the CLI wrapper executable
+chmod +x loglens
+```
+
+### 3. Run the CLI Agent
+Pass natural language commands directly to the agent. It will analyze your environment, generate the fix, and wait for confirmation before executing.
+```bash
+./loglens "install feroxbuster from github"
+./loglens "pacman won't let me install anything, it says the database is locked"
+./loglens "find whatever is running on port 8080 and kill it"
+```
+
+### 4. Optional: Run the Web Dashboard
+If you want to use the visual drag-and-drop log analyzer, launch the containerized web app:
+```bash
+docker compose up --build
+```
+Navigate to `http://localhost:8501`.
 
 ---
 
-### Option A: Docker Compose Deployment (Recommended)
+## ⚙️ System-Wide Installation (Optional)
 
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/YOUR_GITHUB_USERNAME/loglens-ai.git
-   cd loglens-ai
-   ```
+Make LogLens feel like a native Linux tool by linking the executable and installing the manual page:
 
-2. **Configure Environment Variables:**
-   Create a `.env` file in the root directory:
-   ```bash
-   echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
-   ```
+```bash
+# Make the command globally accessible
+sudo ln -s $(pwd)/loglens /usr/local/bin/loglens
 
-3. **Build & Run with Docker Compose:**
-   ```bash
-   docker compose up --build
-   ```
+# Install the man page
+sudo cp loglens.1 /usr/local/share/man/man1/
+sudo mandb
 
-4. **Access the Application:**
-   Open your browser and navigate to `http://localhost:8501`.
-
----
-
-### Option B: Local Python Setup
-
-1. **Clone & Navigate:**
-   ```bash
-   git clone https://github.com/YOUR_GITHUB_USERNAME/loglens-ai.git
-   cd loglens-ai
-   ```
-
-2. **Create a Virtual Environment:**
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate
-   ```
-
-3. **Install Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Export API Key & Run App:**
-   ```bash
-   export GEMINI_API_KEY="your_gemini_api_key_here"
-   streamlit run app.py
-   ```
+# Test it
+man loglens
+loglens "update my system"
+```
 
 ---
 
 ## 🤝 Contributing
-
 Contributions are welcome! This project participates in **Hacktoberfest 2026**.
 
 1. Fork the Project Repository.
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
 3. Commit your Changes (`git commit -m 'feat: Add some AmazingFeature'`).
 4. Push to the Branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request with proper documentation.
+5. Open a Pull Request.
 
 ---
 
 ## 📄 License
-
 Distributed under the **MIT License**. See `LICENSE` for more information.
 
 ---
 
 ## 💖 Acknowledgments
-
 - Hosted at **Poona College, Pune** for **Hacktoberfest Hack Day Pune 2026**.
-- Special thanks to **Google DeepMind** for model access via Gemini API and **DigitalOcean / DEV** for community support.
+- Special thanks to **Google DeepMind** for model access.

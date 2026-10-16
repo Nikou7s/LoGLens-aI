@@ -1,0 +1,31 @@
+.TH LOGLENS 1 "October 2026" "v1.0.0" "LogLens AI Manual"
+.SH NAME
+loglens \- Autonomous Linux Systems Administrator and Security Copilot
+.SH SYNOPSIS
+.B loglens
+[\fI"QUERY"\fR]
+.SH DESCRIPTION
+.B loglens
+is a terminal-based AI assistant powered by Google Gemma/Gemini models. It automatically scans host system telemetry (OS, architecture, package managers) and generates tailored, natively executable Bash commands to resolve system administration and security auditing tasks.
+.PP
+LogLens operates with a human-in-the-loop safeguard, proposing the exact command and awaiting user confirmation before executing on the host system.
+.SH OPTIONS
+.TP
+\fB"QUERY"\fR
+The natural language task or error message you want LogLens to resolve. Must be enclosed in quotes if it contains spaces.
+.SH EXAMPLES
+.TP
+Install a package from the standard repositories or AUR:
+$ loglens "install feroxbuster"
+.TP
+Troubleshoot a systemd service:
+$ loglens "check why docker.service is failing to start"
+.TP
+Perform network and port diagnostics:
+$ loglens "find whatever is running on port 8080 and kill it"
+.SH ENVIRONMENT
+.TP
+.B GEMINI_API_KEY
+Required. The API key for authenticating with Google GenAI endpoints. Can be exported in the shell or stored in a \fB.env\fR file in the project directory.
+.SH AUTHOR
+Built for Hacktoberfest Hack Day Pune x Poona College.
