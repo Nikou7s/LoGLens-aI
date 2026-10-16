@@ -2,4 +2,10 @@
 # Resolve symlink to find the true project directory
 SCRIPT_PATH=$(readlink -f "${BASH_SOURCE[0]}")
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+
+# Automatically export variables from .env if the file exists
+if [ -f "$SCRIPT_DIR/.env" ]; then
+    export $(grep -v '^#' "$SCRIPT_DIR/.env" | xargs)
+fi
+
 "$SCRIPT_DIR/.venv/bin/python" "$SCRIPT_DIR/agent.py" "$@"
