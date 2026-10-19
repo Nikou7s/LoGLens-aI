@@ -1,4 +1,5 @@
 # 🛠 LogLens AI — SysAdmin & Security Copilot
+<img width="950" height="580" alt="demo" src="https://github.com/user-attachments/assets/e07b3438-1ace-4c3f-b665-30e89fe31a3d" />
 
 [![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-orange.svg)](https://hacktoberfest.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
