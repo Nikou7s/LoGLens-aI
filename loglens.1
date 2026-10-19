@@ -1,31 +1,34 @@
 .TH LOGLENS 1 "October 2026" "v1.0.0" "LogLens AI Manual"
 .SH NAME
-loglens \- Autonomous Linux Systems Administrator and Security Copilot
+loglens \- autonomous, OS-aware Linux sysadmin and security copilot
 .SH SYNOPSIS
 .B loglens
-[\fI"QUERY"\fR]
+[\fI"task or error description"\fR]
 .SH DESCRIPTION
-.B loglens
-is a terminal-based AI assistant powered by Google Gemma/Gemini models. It automatically scans host system telemetry (OS, architecture, package managers) and generates tailored, natively executable Bash commands to resolve system administration and security auditing tasks.
-.PP
-LogLens operates with a human-in-the-loop safeguard, proposing the exact command and awaiting user confirmation before executing on the host system.
-.SH OPTIONS
+.B LogLens AI
+is an environment-aware terminal copilot and multimodal log auditor. It captures real-time host telemetry (distribution, kernel, package managers, and architecture) to synthesize non-interactive bash remediations, executing them on-demand via human-in-the-loop safeguards.
+.SH MODES
 .TP
-\fB"QUERY"\fR
-The natural language task or error message you want LogLens to resolve. Must be enclosed in quotes if it contains spaces.
-.SH EXAMPLES
+.B Interactive REPL (No arguments)
+Running \fBloglens\fR without arguments initializes an interactive terminal shell that persists across queries.
 .TP
-Install a package from the standard repositories or AUR:
-$ loglens "install feroxbuster"
+.B Single-Shot Execution (With query)
+Running \fBloglens "command"\fR processes the request immediately, prompts for confirmation, and returns to the host shell.
+.SH SPECIAL COMMANDS (REPL)
 .TP
-Troubleshoot a systemd service:
-$ loglens "check why docker.service is failing to start"
+.B clear
+Clears the terminal screen and redraws the telemetry dashboard.
 .TP
-Perform network and port diagnostics:
-$ loglens "find whatever is running on port 8080 and kill it"
-.SH ENVIRONMENT
+.B help
+Displays quick syntax references and command tips.
 .TP
-.B GEMINI_API_KEY
-Required. The API key for authenticating with Google GenAI endpoints. Can be exported in the shell or stored in a \fB.env\fR file in the project directory.
+.B exit\fR, \fBquit
+Terminates the interactive session.
+.SH FILES
+.TP
+.I /etc/os-release
+Queried to resolve host distribution identity.
 .SH AUTHOR
-Built for Hacktoberfest Hack Day Pune x Poona College.
+Saad Shaikh (LogLens AI Project)
+.SH REPORTING BUGS
+Report bugs and open issues at the project repository.
