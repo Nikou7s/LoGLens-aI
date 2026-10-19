@@ -8,9 +8,9 @@
 > **LogLens AI** is a dual-mode, autonomous system administration assistant. It features an **interactive web dashboard** for multimodal log analysis and a **native terminal copilot** that scans host telemetry to generate and execute OS-tailored remediation commands directly on your machine.
 
 Built for **Hacktoberfest Hack Day Pune x Poona College** under the **Best Use of Gemma 4** and **Best Open-Source AI Project** tracks.
-
-<img width="950" height="580" alt="demo" src="https://github.com/user-attachments/assets/e07b3438-1ace-4c3f-b665-30e89fe31a3d" />
 ---
+<img width="950" height="580" alt="demo" src="https://github.com/user-attachments/assets/e07b3438-1ace-4c3f-b665-30e89fe31a3d" />
+
 
 ## 📌 Problem Statement
 
