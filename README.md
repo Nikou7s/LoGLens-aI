@@ -9,7 +9,8 @@ LogLens AI is a dual-mode, autonomous system administration assistant. It featur
 
 > Built for **Hacktoberfest Hack Day Pune x Poona College** under the **Best Use of Gemma 4** and **Best Open-Source AI Project** tracks.
 
-![demo](demo.gif)
+<img width="950" height="580" alt="demo" src="https://github.com/user-attachments/assets/7442e1d0-694e-45a0-b24e-88059b1b65da" />
+
 
 ---
 
